@@ -5,13 +5,13 @@ using Zork.Models;
 
 namespace Zork
 {
-    public class Game
+    public class Gameplay
     {
         private static int TAILLE_PLATEAU = 10;
         private List<List<int>> plateau;
         private string gameName;
 
-        public Game(string gameName)
+        public Gameplay(string gameName)
         {
             this.gameName = gameName;
         }
@@ -26,7 +26,7 @@ namespace Zork
             } while (string.IsNullOrWhiteSpace(gn));
 
             Random rnd = new Random();
-            Game g = new Game(gn);
+            Gameplay g = new Gameplay(gn);
             int id = 0;
             for (int i = 0; i < TAILLE_PLATEAU; i++)
             {
@@ -37,7 +37,7 @@ namespace Zork
                     {
                         //loot
                     }
-                    else if(type <= 7)
+                    else if(type < 7)
                     {
                         //monster
                     }
