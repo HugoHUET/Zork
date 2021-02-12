@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Threading;
+using Zork.Models;
 
 namespace Zork
 {
@@ -6,16 +9,28 @@ namespace Zork
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("#########################################################");
-            Console.WriteLine("#                        ZORK                           #");
-            Console.WriteLine("#                                                       #");
-            Console.WriteLine("#########################################################");
-            Console.WriteLine("MAIN MENU");
-            Console.WriteLine("1- Create New Game");
-            Console.WriteLine("2- Load Saved Game");
-            Console.WriteLine("3- About");
-            Console.WriteLine("4- Exit");
+            var options = new List<Option>
+            {
+                new Option("Create new game", () => {
+                    Game.create();
+                }),
+                new Option("Load saved game", () => {
+                    Game.load();
+                }),
+                new Option("About", () => {
+                    WriteTemporaryMessage("Paul Lereverend et Hugo Huet");
+                }),
+                new Option("Exit", () => Environment.Exit(0)),
+            };
 
+            Menu.DisplayMenu(options);
+        }
+
+        // Default action of all the options. You can create more methods
+        static void WriteTemporaryMessage(string message)
+        {
+            Console.Clear();
+            Console.WriteLine(message);
         }
     }
 }
