@@ -7,8 +7,6 @@ namespace DataAccessLayer.Models
         public string Name { get; set; }
         public int Hp { get; set; }
         public int Xp { get; set; }
-        public int posX { get; set; }
-        public int posY { get; set; }
 
         public Player()
         {
