@@ -127,6 +127,17 @@ namespace Zork
             }
         }
 
+        //TODO : récupérer de l'XP en fonction de la différence de niveau
+        private void getXp(Monster monster)
+        {
+
+        }
+
+        //TODO : Récupérer éventuellement un loot en fonction de la différence de niveau
+        private void getLoot(Monster monster)
+        {
+
+        }
         private void getAttacked(Monster monster)
         {
             Random random = new Random();
@@ -157,7 +168,7 @@ namespace Zork
             return false;
         }
 
-        // plus le monstre et le joueur ont un niveau proche, moins la chance de s'échapper est grande.
+        // Plus le monstre et le joueur ont un niveau proche, moins la chance de s'échapper est grande.
         // On estime que si le monstre est trop haut niveau le joueur peux s'enfuir pour éviter de mourir
         // A l'inverse si le joueur peut éclater le monstre facilement, il peut également esquiver le combat pour gagner du temps
         private Boolean canRunAway(Monster monster)
