@@ -9,13 +9,14 @@ namespace Zork
     {
         static void Main(string[] args)
         {
+            Gameplay gameplay = new Gameplay();
             var options = new List<Option>
             {
                 new Option("Create new game", () => {
-                    Game.create();
+                    gameplay.create();
                 }),
                 new Option("Load saved game", () => {
-                    Game.load();
+                    gameplay.load();
                 }),
                 new Option("About", () => {
                     WriteTemporaryMessage("Paul Lereverend et Hugo Huet");

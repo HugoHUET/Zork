@@ -7,6 +7,8 @@
 
   <ItemGroup>
     <Folder Include="Models\" />
+    <Folder Include="AccessLayer\" />
+    <Folder Include="Extensions\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.3" />

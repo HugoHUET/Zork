@@ -61,6 +61,7 @@ namespace Zork
 
         private void run()
         {
+            Console.WriteLine(this.context.Games.First().Id);
             var options = new List<Option>
             {
                 new Option("Afficher l’inventaire", () => {
@@ -74,7 +75,7 @@ namespace Zork
                 })
             };
 
-            Menu.DisplayMenu(options);
+            //Menu.DisplayMenu(options);
         }
     }
 }

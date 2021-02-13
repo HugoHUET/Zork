@@ -10,7 +10,7 @@ namespace DataAccessLayer
         {
             var dbContextBuilder = new DbContextOptionsBuilder<ZorkDbContext>();
 
-            dbContextBuilder.UseSqlServer("Server=localhost;Database=ZorkDb;Trusted_Connection=False;User ID=sa;Password=reallyStrongPwd123;",
+            dbContextBuilder.UseSqlServer("Server=localhost;Database=ZorkDb;Trusted_Connection=False;User ID=sa;Password=Root123@;",
                 opt => opt.MigrationsAssembly("DataAccessLayer"));
 
             return new ZorkDbContext(dbContextBuilder.Options);
