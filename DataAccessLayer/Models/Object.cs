@@ -9,6 +9,14 @@ namespace DataAccessLayer.Models
         public int AttackStrengthBoost { get; set; }
         public int DefenseBoost { get; set; }
 
+        public Object(string name, int hPRestoreValue, int attackStrengthBoost, int defenseBoost)
+        {
+            Name = name;
+            HPRestoreValue = hPRestoreValue;
+            AttackStrengthBoost = attackStrengthBoost;
+            DefenseBoost = defenseBoost;
+        }
+
         public Object()
         {
         }

@@ -168,11 +168,11 @@ namespace DataAccessLayer.Migrations
             modelBuilder.Entity("DataAccessLayer.Models.Object", b =>
                 {
                     b.HasOne("DataAccessLayer.Models.Game", null)
-                        .WithMany("Objects")
+                        .WithMany("Inventory")
                         .HasForeignKey("GameId");
 
                     b.HasOne("DataAccessLayer.Models.Game", null)
-                        .WithMany("inventory")
+                        .WithMany("UsedObjects")
                         .HasForeignKey("GameId1");
                 });
 
@@ -185,11 +185,11 @@ namespace DataAccessLayer.Migrations
 
             modelBuilder.Entity("DataAccessLayer.Models.Game", b =>
                 {
-                    b.Navigation("inventory");
+                    b.Navigation("Inventory");
 
                     b.Navigation("Monsters");
 
-                    b.Navigation("Objects");
+                    b.Navigation("UsedObjects");
 
                     b.Navigation("Weapons");
                 });

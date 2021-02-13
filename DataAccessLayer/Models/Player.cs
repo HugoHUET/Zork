@@ -8,6 +8,13 @@ namespace DataAccessLayer.Models
         public int Hp { get; set; }
         public int Xp { get; set; }
 
+        public Player(string name, int hp, int xp)
+        {
+            Name = name;
+            Hp = hp;
+            Xp = xp;
+        }
+
         public Player()
         {
         }

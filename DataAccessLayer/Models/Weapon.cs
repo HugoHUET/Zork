@@ -8,6 +8,13 @@ namespace DataAccessLayer.Models
         public int Damages { get; set; }
         public double MissRate { get; set; }
 
+        public Weapon(string name, int damages, double missRate)
+        {
+            this.name = name;
+            Damages = damages;
+            MissRate = missRate;
+        }
+
         public Weapon()
         {
         }
