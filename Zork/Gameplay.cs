@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using DataAccessLayer;
 using DataAccessLayer.Models;
 using Zork.Models;
 
@@ -9,9 +10,12 @@ namespace Zork
     public class Gameplay
     {
         private string gameName;
+        private readonly ZorkDbContext context;
 
         public Gameplay()
         {
+            DbContextFactory dbFactory = new DbContextFactory();
+            this.context = dbFactory.CreateDbContext(null);
         }
 
         public void create()
@@ -26,28 +30,28 @@ namespace Zork
             this.gameName = gameName;
 
             Game game = new Game();
-            Player player = new Player();
-            Weapon rustedToothPick = new Weapon();
-            Weapon nerfGun = new Weapon();
+            //Player player = new Player();
+            //Weapon rustedToothPick = new Weapon();
+            //Weapon nerfGun = new Weapon();
 
-            DataAccessLayer.Models.Object painDeMie = new DataAccessLayer.Models.Object();
-            DataAccessLayer.Models.Object huileDeFoieDeMorue = new DataAccessLayer.Models.Object();
-            DataAccessLayer.Models.Object bananaSkin = new DataAccessLayer.Models.Object();
+            //DataAccessLayer.Models.Object painDeMie = new DataAccessLayer.Models.Object();
+            //DataAccessLayer.Models.Object huileDeFoieDeMorue = new DataAccessLayer.Models.Object();
+            //DataAccessLayer.Models.Object bananaSkin = new DataAccessLayer.Models.Object();
 
-            Monster kwoakGaming = new Monster();
-            Monster cSharpDev = new Monster();
+            //Monster kwoakGaming = new Monster();
+            //Monster cSharpDev = new Monster();
 
-            game.Monsters.Add(kwoakGaming);
-            game.Monsters.Add(cSharpDev);
+            //game.Monsters.Add(kwoakGaming);
+            //game.Monsters.Add(cSharpDev);
 
-            game.player = player;
+            //game.player = player;
 
-            game.Weapons.Add(rustedToothPick);
-            game.Weapons.Add(nerfGun);
+            //game.Weapons.Add(rustedToothPick);
+            //game.Weapons.Add(nerfGun);
 
-            game.Objects.Add(painDeMie);
-            game.Objects.Add(huileDeFoieDeMorue);
-            game.Objects.Add(bananaSkin);
+            //game.Objects.Add(painDeMie);
+            //game.Objects.Add(huileDeFoieDeMorue);
+            //game.Objects.Add(bananaSkin);
 
             game.name = this.gameName;
 
