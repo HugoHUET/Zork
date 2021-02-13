@@ -41,8 +41,8 @@ namespace Zork
             DataAccessLayer.Models.Object huileDeFoieDeMorue = new DataAccessLayer.Models.Object("huileDeFoieDeMorue", -3, 3, 5);
             DataAccessLayer.Models.Object bananaSkin = new DataAccessLayer.Models.Object("bananaSkin", 2, 1, 1);
 
-            Monster kwoakGaming = new Monster("kwoakGaming",3 , 0.2, 20);
-            Monster cSharpDev = new Monster("cSharpDev", 5, 0.1, 40);
+            Monster kwoakGaming = new Monster("kwoakGaming",3 , 0.2, 20, 12);
+            Monster cSharpDev = new Monster("cSharpDev", 5, 0.1, 40, 40);
 
             game.Monsters.Add(kwoakGaming);
             game.Monsters.Add(cSharpDev);
@@ -155,6 +155,16 @@ namespace Zork
                 return true;
             }
             return false;
+        }
+
+        // plus le monstre et le joueur ont un niveau proche, moins la chance de s'échapper est grande.
+        // On estime que si le monstre est trop haut niveau le joueur peux s'enfuir pour éviter de mourir
+        // A l'inverse si le joueur peut éclater le monstre facilement, il peut également esquiver le combat pour gagner du temps
+        private Boolean canRunAway(Monster monster)
+        {
+            double runAwayRate = 0.5 + Math.Abs((game.player.Xp / 1000 - monster.Level) / 100);
+            Random random = new Random();
+            return random.NextDouble() < runAwayRate;
         }
 
         // Met à jour la game dans la bdd
