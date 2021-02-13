@@ -51,6 +51,7 @@ namespace DataAccessLayer.Migrations
                     Damages = table.Column<int>(type: "int", nullable: false),
                     MissRate = table.Column<double>(type: "float", nullable: false),
                     Hp = table.Column<int>(type: "int", nullable: false),
+                    Level = table.Column<int>(type: "int", nullable: false),
                     GameId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>

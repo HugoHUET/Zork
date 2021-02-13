@@ -55,6 +55,9 @@ namespace DataAccessLayer.Migrations
                     b.Property<int>("Hp")
                         .HasColumnType("int");
 
+                    b.Property<int>("Level")
+                        .HasColumnType("int");
+
                     b.Property<double>("MissRate")
                         .HasColumnType("float");
 
