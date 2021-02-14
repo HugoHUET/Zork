@@ -76,7 +76,8 @@ namespace DataAccessLayer.Migrations
                     AttackStrengthBoost = table.Column<int>(type: "int", nullable: false),
                     DefenseBoost = table.Column<int>(type: "int", nullable: false),
                     GameId = table.Column<int>(type: "int", nullable: true),
-                    GameId1 = table.Column<int>(type: "int", nullable: true)
+                    PlayerId = table.Column<int>(type: "int", nullable: true),
+                    PlayerId1 = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -88,9 +89,15 @@ namespace DataAccessLayer.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Objects_Games_GameId1",
-                        column: x => x.GameId1,
-                        principalTable: "Games",
+                        name: "FK_Objects_Player_PlayerId",
+                        column: x => x.PlayerId,
+                        principalTable: "Player",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Objects_Player_PlayerId1",
+                        column: x => x.PlayerId1,
+                        principalTable: "Player",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -104,7 +111,8 @@ namespace DataAccessLayer.Migrations
                     name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Damages = table.Column<int>(type: "int", nullable: false),
                     MissRate = table.Column<double>(type: "float", nullable: false),
-                    GameId = table.Column<int>(type: "int", nullable: true)
+                    GameId = table.Column<int>(type: "int", nullable: true),
+                    PlayerId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -113,6 +121,12 @@ namespace DataAccessLayer.Migrations
                         name: "FK_Weapons_Games_GameId",
                         column: x => x.GameId,
                         principalTable: "Games",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Weapons_Player_PlayerId",
+                        column: x => x.PlayerId,
+                        principalTable: "Player",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -133,14 +147,24 @@ namespace DataAccessLayer.Migrations
                 column: "GameId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Objects_GameId1",
+                name: "IX_Objects_PlayerId",
                 table: "Objects",
-                column: "GameId1");
+                column: "PlayerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Objects_PlayerId1",
+                table: "Objects",
+                column: "PlayerId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Weapons_GameId",
                 table: "Weapons",
                 column: "GameId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Weapons_PlayerId",
+                table: "Weapons",
+                column: "PlayerId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

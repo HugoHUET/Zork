@@ -87,20 +87,25 @@ namespace DataAccessLayer.Migrations
                     b.Property<int?>("GameId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("GameId1")
-                        .HasColumnType("int");
-
                     b.Property<int>("HPRestoreValue")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("PlayerId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("PlayerId1")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("GameId");
 
-                    b.HasIndex("GameId1");
+                    b.HasIndex("PlayerId");
+
+                    b.HasIndex("PlayerId1");
 
                     b.ToTable("Objects");
                 });
@@ -142,12 +147,17 @@ namespace DataAccessLayer.Migrations
                     b.Property<double>("MissRate")
                         .HasColumnType("float");
 
+                    b.Property<int?>("PlayerId")
+                        .HasColumnType("int");
+
                     b.Property<string>("name")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("GameId");
+
+                    b.HasIndex("PlayerId");
 
                     b.ToTable("Weapons");
                 });
@@ -171,12 +181,16 @@ namespace DataAccessLayer.Migrations
             modelBuilder.Entity("DataAccessLayer.Models.Object", b =>
                 {
                     b.HasOne("DataAccessLayer.Models.Game", null)
-                        .WithMany("Inventory")
+                        .WithMany("Loots")
                         .HasForeignKey("GameId");
 
-                    b.HasOne("DataAccessLayer.Models.Game", null)
+                    b.HasOne("DataAccessLayer.Models.Player", null)
+                        .WithMany("Inventory")
+                        .HasForeignKey("PlayerId");
+
+                    b.HasOne("DataAccessLayer.Models.Player", null)
                         .WithMany("UsedObjects")
-                        .HasForeignKey("GameId1");
+                        .HasForeignKey("PlayerId1");
                 });
 
             modelBuilder.Entity("DataAccessLayer.Models.Weapon", b =>
@@ -184,13 +198,24 @@ namespace DataAccessLayer.Migrations
                     b.HasOne("DataAccessLayer.Models.Game", null)
                         .WithMany("Weapons")
                         .HasForeignKey("GameId");
+
+                    b.HasOne("DataAccessLayer.Models.Player", null)
+                        .WithMany("Weapons")
+                        .HasForeignKey("PlayerId");
                 });
 
             modelBuilder.Entity("DataAccessLayer.Models.Game", b =>
                 {
-                    b.Navigation("Inventory");
+                    b.Navigation("Loots");
 
                     b.Navigation("Monsters");
+
+                    b.Navigation("Weapons");
+                });
+
+            modelBuilder.Entity("DataAccessLayer.Models.Player", b =>
+                {
+                    b.Navigation("Inventory");
 
                     b.Navigation("UsedObjects");
 
