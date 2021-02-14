@@ -69,21 +69,69 @@ namespace Zork
 
         private void run()
         {
-            Console.WriteLine(this.context.Games.First().Id);
             var options = new List<Option>
             {
                 new Option("Afficher l’inventaire", () => {
-                    //TODO
+                    this.displayInventory();
                 }),
                 new Option("Afficher les stats", () => {
-                    //TODO
+                    this.displayStats();
                 }),
                 new Option("Se déplacer", () => {
+                    this.selectDirection();
+                })
+            };
+
+            Menu.DisplayMenu(options);
+        }
+
+        private void displayInventory()
+        {
+            if(game.Inventory.Count > 0)
+            {
+                game.Inventory.ForEach((objet) =>
+                {
+                    Console.WriteLine($"{objet.Name} : \n Attack : {objet.AttackStrengthBoost}\n Defense : {objet.DefenseBoost}\n HP : {objet.HPRestoreValue}");
+                });
+            }
+            else
+            {
+                Console.WriteLine("There is no item in your inventory");
+            }
+
+            Console.WriteLine("\nPress any key to return");
+            Console.ReadKey();
+            this.run();
+        }
+
+        private void displayStats()
+        {
+            Console.WriteLine($"Name : {game.player.Name}\nHP : {game.player.Hp}\nExperience : {game.player.Xp}");
+
+            Console.WriteLine("\nPress any key to return");
+            Console.ReadKey();
+            this.run();
+        }
+
+        private void selectDirection()
+        {
+            var options = new List<Option>
+            {
+                new Option("North", () => {
+                    //TODO
+                }),
+                new Option("South", () => {
+                    //TODO
+                }),
+                new Option("West", () => {
+                    //TODO
+                }),
+                new Option("East", () => {
                     //TODO
                 })
             };
 
-            //Menu.DisplayMenu(options);
+            Menu.DisplayMenu(options);
         }
 
         private void useItem(DataAccessLayer.Models.Object item)
