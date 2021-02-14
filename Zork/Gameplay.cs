@@ -143,6 +143,10 @@ namespace Zork
                 game.player.Hp += item.HPRestoreValue;
                 game.player.Inventory.Remove(item);
                 game.player.UsedObjects.Add(item);
+                Console.WriteLine("Vous utilisez " + item.Name);
+                Console.WriteLine("+ " + item.HPRestoreValue + " HP");
+                Console.WriteLine("+ " + item.AttackStrengthBoost + " de boost d'attaque");
+                Console.WriteLine("+ " + item.DefenseBoost + " de boost de défense");
 
                 this.updateGame();
             }
@@ -159,6 +163,8 @@ namespace Zork
             if(random.NextDouble() > weapon.MissRate)
             {
                 monster.Hp -= Convert.ToInt32(weapon.Damages * (1.0 + game.player.getTotalAttackBoost()));
+                Console.WriteLine("Vous infligez " + Convert.ToInt32(weapon.Damages * (1.0 + game.player.getTotalAttackBoost())) + " dégats");
+
                 if (monster.Hp <= 0)
                 {
                     game.Monsters.Remove(monster);
@@ -172,6 +178,7 @@ namespace Zork
                 }
                 else
                 {
+                    Console.WriteLine("Il reste " + monster.Hp + " HP à " + monster.Name);
                     context.Monsters.Update(monster);
                     context.SaveChanges();
                 }
@@ -221,6 +228,7 @@ namespace Zork
             if (random.NextDouble() > monster.MissRate)
             {
                 game.player.Hp -= Convert.ToInt32(monster.Damages * (1.0 - game.player.getTotalDefenseBoost()));
+                Console.WriteLine(monster.Name + " vous inflige " + Convert.ToInt32(monster.Damages * (1.0 - game.player.getTotalDefenseBoost())) + "dégats");
                 updateGame();
             }
             else
@@ -247,6 +255,9 @@ namespace Zork
                 context.SaveChanges();
                 return true;
             }
+            Console.WriteLine("Il vous reste  " + game.player.Hp + " HP");
+            Console.WriteLine("Il reste  " + game.Monsters.Count + " monstres");
+
             return false;
         }
 
@@ -258,10 +269,16 @@ namespace Zork
             if (random.NextDouble() < lootRate)
             {
                 int index = random.Next(game.Weapons.Count);
-                game.player.Weapons.Add(game.Weapons[index]);
                 Console.WriteLine("Vous avez trouvé " + game.Weapons[index].name);
-
-                updateGame();
+                if (game.player.Weapons.Contains(game.Weapons[index]))
+                {
+                    Console.WriteLine("Pas de chance vous possédez déjà cette arme");
+                }
+                else
+                {
+                    game.player.Weapons.Add(game.Weapons[index]);
+                    updateGame();
+                }
             }
         }
 
