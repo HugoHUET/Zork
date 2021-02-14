@@ -214,10 +214,10 @@ namespace Zork
                 game.player.Inventory.Remove(item);
                 game.player.UsedObjects.Add(item);
 
-                Menu.lastMoveDescription = "Vous utilisez " + item.Name + "\n";
-                Menu.lastMoveDescription += "+ " + item.HPRestoreValue + " HP\n";
-                Menu.lastMoveDescription += "+ " + item.AttackStrengthBoost + " de boost d'attaque\n";
-                Menu.lastMoveDescription += "+ " + item.DefenseBoost + " de boost de défense\n";
+                Menu.lastMoveDescription = $"Vous utilisez {item.Name}\n";
+                Menu.lastMoveDescription += $"+ {item.HPRestoreValue} HP\n";
+                Menu.lastMoveDescription += $"+ {item.AttackStrengthBoost} de boost d'attaque\n";
+                Menu.lastMoveDescription += $"+ {item.DefenseBoost} de boost de défense\n";
 
                 this.updateGame();
             }
@@ -233,14 +233,14 @@ namespace Zork
             if (random.NextDouble() > weapon.MissRate)
             {
                 monster.Hp -= Convert.ToInt32(weapon.Damages * (1.0 + game.player.getTotalAttackBoost()));
-                Menu.lastMoveDescription = "Vous infligez " + Convert.ToInt32(weapon.Damages * (1.0 + game.player.getTotalAttackBoost())) + " point(s) de dégats. ";
+                Menu.lastMoveDescription = $"Vous infligez { Convert.ToInt32(weapon.Damages * (1.0 + game.player.getTotalAttackBoost())) } point(s) de dégats. ";
 
                 if (monster.Hp <= 0)
                 {
                     game.Monsters.Remove(monster);
                     updateGame();
 
-                    Menu.lastMoveDescription += monster.Name + " est mort\n";
+                    Menu.lastMoveDescription += $"{monster.Name} est mort\n";
 
                     //On récupère l'XP et les loots à la fin du combat
                     getXp(monster);
@@ -248,7 +248,7 @@ namespace Zork
                 }
                 else
                 {
-                    Menu.lastMoveDescription += "Il reste " + monster.Hp + " HP à " + monster.Name + "\n";
+                    Menu.lastMoveDescription += $"Il reste {monster.Hp} HP à {monster.Name}\n";
                     context.Monsters.Update(monster);
                     context.SaveChanges();
 
@@ -280,7 +280,7 @@ namespace Zork
 
             updateGame();
 
-            Menu.lastMoveDescription += "Vous avez gagné " + Convert.ToInt32(xpToGet * randomFactor) + " XP !\n";
+            Menu.lastMoveDescription += $"Vous avez gagné { Convert.ToInt32(xpToGet * randomFactor) } XP !\n";
         }
 
         //Récupère un loot aléatoire. Le %drop est augmenté si le monstre a un lvl important par rapport au joueur
@@ -292,13 +292,13 @@ namespace Zork
             {
                 int index = random.Next(game.Loots.Count);
                 game.player.Inventory.Add(game.Loots[index]);
-                Menu.lastMoveDescription += "Vous avez drop " + game.Loots[index].Name + "\n";
+                Menu.lastMoveDescription += $"Vous avez drop { game.Loots[index].Name }\n";
 
                 updateGame();
             }
             else
             {
-                Menu.lastMoveDescription += "Pas de chance " + monster.Name + " n'a pas d'objet sur lui\n";
+                Menu.lastMoveDescription += $"Pas de chance, {monster.Name} n'a pas d'objet sur lui\n";
             }
 
         }
@@ -310,12 +310,12 @@ namespace Zork
                 if (random.NextDouble() > monster.MissRate)
                 {
                     game.player.Hp -= Convert.ToInt32(monster.Damages * (1.0 - game.player.getTotalDefenseBoost()));
-                    Menu.lastMoveDescription += " " + monster.Name + " vous inflige " + Convert.ToInt32(monster.Damages * (1.0 - game.player.getTotalDefenseBoost())) + " point(s) de dégats\n";
+                    Menu.lastMoveDescription += $" {monster.Name} vous inflige { Convert.ToInt32(monster.Damages * (1.0 - game.player.getTotalDefenseBoost())) } point(s) de dégats\n";
                     updateGame();
                 }
                 else
                 {
-                    Menu.lastMoveDescription += " Coup de bol ! " + monster.Name + " a fait un échec critique\n";
+                    Menu.lastMoveDescription += $" Coup de bol ! { monster.Name } a fait un échec critique\n";
                 }
                 Menu.lastMoveDescription += $" Il vous reste {game.player.Hp} HP\n";
             }
@@ -341,7 +341,7 @@ namespace Zork
                 return true;
             }
 
-            Menu.lastMoveDescription += "Vous avez " + game.player.Hp + " HP\nIl reste  " + game.Monsters.Count + " monstres à vaincre sur la carte\n";
+            Menu.lastMoveDescription += $"Vous avez { game.player.Hp } HP\nIl reste { game.Monsters.Count } monstres à vaincre sur la carte\n";
 
             return false;
         }
@@ -354,7 +354,7 @@ namespace Zork
             if (random.NextDouble() < lootRate)
             {
                 int index = random.Next(game.Weapons.Count);
-                Menu.lastMoveDescription = "Vous avez trouvé " + game.Weapons[index].name + "\n";
+                Menu.lastMoveDescription = $"Vous avez trouvé { game.Weapons[index].name }\n";
                 if (game.player.Weapons.Contains(game.Weapons[index]))
                 {
                     Menu.lastMoveDescription += "Pas de chance vous possédez déjà cette arme\n";
