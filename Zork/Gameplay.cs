@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using DataAccessLayer;
 using DataAccessLayer.Models;
+using Microsoft.EntityFrameworkCore;
 using Zork.Models;
+using Object = DataAccessLayer.Models.Object;
 
 namespace Zork
 {
@@ -36,6 +38,8 @@ namespace Zork
             Player player = new Player("torti", 20, 0);
             Weapon rustedToothPick = new Weapon("rustedToothPick", 5, 0.1);
             Weapon nerfGun = new Weapon("nerfGun", 1, 0.5);
+
+            player.Weapons.Add(rustedToothPick);
 
             DataAccessLayer.Models.Object painDeMie = new DataAccessLayer.Models.Object("painDeMie", 2, 1, 1);
 
@@ -71,69 +75,135 @@ namespace Zork
 
         private void run()
         {
-            var options = new List<Option>
+            while (shouldEndGame() != true)
             {
-                new Option("Afficher l’inventaire", () => {
-                    this.displayInventory();
-                }),
-                new Option("Afficher les stats", () => {
-                    this.displayStats();
-                }),
-                new Option("Se déplacer", () => {
-                    this.selectDirection();
-                })
-            };
-
-            Menu.DisplayMenu(options);
-        }
-
-        private void displayInventory()
-        {
-            if(game.player.Inventory.Count > 0)
-            {
-                game.player.Inventory.ForEach((objet) =>
+                var options = new List<Option>
                 {
-                    Console.WriteLine($"{objet.Name} : \n Attack : {objet.AttackStrengthBoost}\n Defense : {objet.DefenseBoost}\n HP : {objet.HPRestoreValue}");
-                });
-            }
-            else
-            {
-                Console.WriteLine("There is no item in your inventory");
-            }
+                    new Option("Afficher l’inventaire", () => listAndUseItems()),
+                    new Option("Afficher les stats", () => displayStats()),
+                    new Option("Se déplacer", () => selectDirection())
+                };
 
-            Console.WriteLine("\nPress any key to return");
-            Console.ReadKey();
-            this.run();
+                Menu.DisplayMenu(options);
+
+            } ;
         }
 
         private void displayStats()
         {
-            Console.WriteLine($"Name : {game.player.Name}\nHP : {game.player.Hp}\nExperience : {game.player.Xp}");
+            var options = new List<Option>{ new Option("Retour", () => { }) };
 
-            Console.WriteLine("\nPress any key to return");
-            Console.ReadKey();
-            this.run();
+            Menu.lastMoveDescription = $"Name : {game.player.Name}\nHP : {game.player.Hp}\nExperience : {game.player.Xp}\n";
+
+            Menu.DisplayMenu(options);
         }
 
         private void selectDirection()
         {
             var options = new List<Option>
             {
-                new Option("North", () => {
-                    //TODO
-                }),
-                new Option("South", () => {
-                    //TODO
-                }),
-                new Option("West", () => {
-                    //TODO
-                }),
-                new Option("East", () => {
-                    //TODO
-                })
+                new Option("Nord", () => move()),
+                new Option("Sud", () => move()),
+                new Option("Est", () => move()),
+                new Option("Ouest", () => move()),
+                new Option("Retour", () => { }),
             };
 
             Menu.DisplayMenu(options);
+        }
+
+        private void move()
+        {
+            Random random = new Random();
+            if (random.NextDouble() >= 0.2) //80% de chance de tomber sur un monstre
+            {
+                int index = random.Next(context.Monsters.Count());
+                Monster monster = context.Monsters.ToList()[index];
+                Menu.lastMoveDescription = $"Attention, un(e) {monster.Name} sauvage apparait !\n";
+                if (canRunAway(monster))
+                {
+                    var options = new List<Option>
+                    {
+                        new Option("Prendre la fuite", () => {
+                            Menu.lastMoveDescription = "Vous avez pris la fuite...\n";
+                        }),
+                        new Option("Combattre", () => fight(monster))
+                    };
+                    Menu.DisplayMenu(options);
+                }
+                else
+                {
+                    fight(monster);
+                }
+            }
+            else
+            {
+                int index = random.Next(context.Objects.Count());
+                Object objet = context.Objects.ToList()[index];
+                game.player.Inventory.Add(objet);
+                updateGame();
+
+                Menu.lastMoveDescription = $"Vous avez trouvé {objet.Name}\n";
+            }
+        }
+
+        private void fight(Monster monster)
+        {
+            do
+            {
+                string tmp = Menu.lastMoveDescription;
+                var options = new List<Option>
+                {
+                    new Option("Utiliser un objet", () => {
+                        bool isReturn = listAndUseItems();
+                        if(isReturn)
+                        {
+                            Menu.lastMoveDescription = tmp;
+                        }
+                    }),
+                    new Option($"Attaquer {monster.Name}", () => listAnsUseWeapons(monster))
+                };
+
+                Menu.DisplayMenu(options);
+
+            } while (game.player.Hp > 0 && monster.Hp > 0);
+        }
+
+        private bool listAndUseItems()
+        {
+            bool isReturn = false;
+            var options = new List<Option>();
+            game.player.Inventory.ForEach((objet) =>
+            {
+                options.Add(new Option($"{objet.Name} : + {objet.HPRestoreValue} HP, + {objet.AttackStrengthBoost} de boost d'attaque, + {objet.DefenseBoost} de boost de défense", () => useItem(objet)));
+            });
+
+            if (options.Count == 0)
+            {
+                Menu.lastMoveDescription = "Vous n'avez pas d'objet dans votre inventaire.";
+            }
+
+            options.Add(new Option("Retour", () => {
+                isReturn = true;
+            }));
+
+            Menu.DisplayMenu(options);
+
+            return isReturn;
+        }
+
+        private void listAnsUseWeapons(Monster monster)
+        {
+            var options = new List<Option>();
+            game.player.Weapons.ForEach((weapon) =>
+            {
+                options.Add(new Option(weapon.name, () => attack(monster, weapon)));
+            });
+
+            if (options.Count > 0)
+            {
+                Menu.DisplayMenu(options);
+            }
         }
 
         private void useItem(DataAccessLayer.Models.Object item)
@@ -143,49 +213,53 @@ namespace Zork
                 game.player.Hp += item.HPRestoreValue;
                 game.player.Inventory.Remove(item);
                 game.player.UsedObjects.Add(item);
-                Console.WriteLine("Vous utilisez " + item.Name);
-                Console.WriteLine("+ " + item.HPRestoreValue + " HP");
-                Console.WriteLine("+ " + item.AttackStrengthBoost + " de boost d'attaque");
-                Console.WriteLine("+ " + item.DefenseBoost + " de boost de défense");
+
+                Menu.lastMoveDescription = "Vous utilisez " + item.Name + "\n";
+                Menu.lastMoveDescription += "+ " + item.HPRestoreValue + " HP\n";
+                Menu.lastMoveDescription += "+ " + item.AttackStrengthBoost + " de boost d'attaque\n";
+                Menu.lastMoveDescription += "+ " + item.DefenseBoost + " de boost de défense\n";
 
                 this.updateGame();
             }
             else
             {
-                Console.WriteLine("Vous ne possédez pas cet item");
+                Menu.lastMoveDescription = "Vous ne possédez pas cet item\n";
             }
-            
         }
 
         // Système d'attaque d'un monstre avec une arme
         private void attack(Monster monster, Weapon weapon)
         {
-            if(random.NextDouble() > weapon.MissRate)
+            if (random.NextDouble() > weapon.MissRate)
             {
                 monster.Hp -= Convert.ToInt32(weapon.Damages * (1.0 + game.player.getTotalAttackBoost()));
-                Console.WriteLine("Vous infligez " + Convert.ToInt32(weapon.Damages * (1.0 + game.player.getTotalAttackBoost())) + " dégats");
+                Menu.lastMoveDescription = "Vous infligez " + Convert.ToInt32(weapon.Damages * (1.0 + game.player.getTotalAttackBoost())) + " point(s) de dégats. ";
 
                 if (monster.Hp <= 0)
                 {
                     game.Monsters.Remove(monster);
-                    this.updateGame();
+                    updateGame();
+
+                    Menu.lastMoveDescription += monster.Name + " est mort\n";
 
                     //On récupère l'XP et les loots à la fin du combat
                     getXp(monster);
                     getLoot(monster);
-
-                    Console.WriteLine(monster.Name + " est mort");
                 }
                 else
                 {
-                    Console.WriteLine("Il reste " + monster.Hp + " HP à " + monster.Name);
+                    Menu.lastMoveDescription += "Il reste " + monster.Hp + " HP à " + monster.Name + "\n";
                     context.Monsters.Update(monster);
                     context.SaveChanges();
+
+                    getAttacked(monster);
                 }
             }
             else
             {
-                Console.WriteLine("Oops ! Echec critique");
+                Menu.lastMoveDescription = "Oops ! Echec critique\n";
+
+                getAttacked(monster);
             }
         }
 
@@ -203,9 +277,10 @@ namespace Zork
             }
 
             game.player.Xp += Convert.ToInt32(xpToGet * randomFactor);
-            Console.WriteLine("Vous avez gagné " + Convert.ToInt32(xpToGet * randomFactor) + " XP !");
 
             updateGame();
+
+            Menu.lastMoveDescription += "Vous avez gagné " + Convert.ToInt32(xpToGet * randomFactor) + " XP !\n";
         }
 
         //Récupère un loot aléatoire. Le %drop est augmenté si le monstre a un lvl important par rapport au joueur
@@ -217,32 +292,42 @@ namespace Zork
             {
                 int index = random.Next(game.Loots.Count);
                 game.player.Inventory.Add(game.Loots[index]);
-                Console.WriteLine("Vous avez drop " + game.Loots[index].Name);
+                Menu.lastMoveDescription += "Vous avez drop " + game.Loots[index].Name + "\n";
 
                 updateGame();
+            }
+            else
+            {
+                Menu.lastMoveDescription += "Pas de chance " + monster.Name + " n'a pas d'objet sur lui\n";
             }
 
         }
         private void getAttacked(Monster monster)
         {
-            if (random.NextDouble() > monster.MissRate)
+            if(monster.Hp > 0)
             {
-                game.player.Hp -= Convert.ToInt32(monster.Damages * (1.0 - game.player.getTotalDefenseBoost()));
-                Console.WriteLine(monster.Name + " vous inflige " + Convert.ToInt32(monster.Damages * (1.0 - game.player.getTotalDefenseBoost())) + "dégats");
-                updateGame();
-            }
-            else
-            {
-                Console.WriteLine("Coup de bol ! " + monster.Name + " a fait un échec critique");
+                Menu.lastMoveDescription += $"Attention {monster.Name} vous attaque :\n";
+                if (random.NextDouble() > monster.MissRate)
+                {
+                    game.player.Hp -= Convert.ToInt32(monster.Damages * (1.0 - game.player.getTotalDefenseBoost()));
+                    Menu.lastMoveDescription += " " + monster.Name + " vous inflige " + Convert.ToInt32(monster.Damages * (1.0 - game.player.getTotalDefenseBoost())) + " point(s) de dégats\n";
+                    updateGame();
+                }
+                else
+                {
+                    Menu.lastMoveDescription += " Coup de bol ! " + monster.Name + " a fait un échec critique\n";
+                }
+                Menu.lastMoveDescription += $" Il vous reste {game.player.Hp} HP\n";
             }
         }
 
         // Verifie si la game doit être terminée et met un message en conséquence
-        private Boolean shouldEndGame()
+        private bool shouldEndGame()
         {
             if (game.player.Hp <= 0)
             {
-                Console.WriteLine("Vous avez perdu !");
+                Menu.lastMoveDescription = "Vous avez perdu !\n";
+
                 context.Games.Remove(game);
                 context.SaveChanges();
                 return true;
@@ -250,13 +335,13 @@ namespace Zork
 
             if(game.Monsters.Count() == 0)
             {
-                Console.WriteLine("Vous avez battu tous les monstres félicitations !");
+                Menu.lastMoveDescription = "Vous avez battu tous les monstres félicitations !\n";
                 context.Games.Remove(game);
                 context.SaveChanges();
                 return true;
             }
-            Console.WriteLine("Il vous reste  " + game.player.Hp + " HP");
-            Console.WriteLine("Il reste  " + game.Monsters.Count + " monstres");
+
+            Menu.lastMoveDescription += "Vous avez " + game.player.Hp + " HP\nIl reste  " + game.Monsters.Count + " monstres à vaincre sur la carte\n";
 
             return false;
         }
@@ -269,10 +354,10 @@ namespace Zork
             if (random.NextDouble() < lootRate)
             {
                 int index = random.Next(game.Weapons.Count);
-                Console.WriteLine("Vous avez trouvé " + game.Weapons[index].name);
+                Menu.lastMoveDescription = "Vous avez trouvé " + game.Weapons[index].name + "\n";
                 if (game.player.Weapons.Contains(game.Weapons[index]))
                 {
-                    Console.WriteLine("Pas de chance vous possédez déjà cette arme");
+                    Menu.lastMoveDescription += "Pas de chance vous possédez déjà cette arme\n";
                 }
                 else
                 {
@@ -285,7 +370,7 @@ namespace Zork
         // Plus le monstre et le joueur ont un niveau proche, moins la chance de s'échapper est grande.
         // On estime que si le monstre est trop haut niveau le joueur peux s'enfuir pour éviter de mourir
         // A l'inverse si le joueur peut éclater le monstre facilement, il peut également esquiver le combat pour gagner du temps
-        private Boolean canRunAway(Monster monster)
+        private bool canRunAway(Monster monster)
         {
             double runAwayRate = 0.5 + Math.Abs((game.player.Xp / 1000 - monster.Level) / 100);
             return random.NextDouble() < runAwayRate;
