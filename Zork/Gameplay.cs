@@ -238,12 +238,16 @@ namespace Zork
             if (game.player.Hp <= 0)
             {
                 Console.WriteLine("Vous avez perdu !");
+                context.Games.Remove(game);
+                context.SaveChanges();
                 return true;
             }
 
             if(game.Monsters.Count() == 0)
             {
                 Console.WriteLine("Vous avez battu tous les monstres félicitations !");
+                context.Games.Remove(game);
+                context.SaveChanges();
                 return true;
             }
             return false;
