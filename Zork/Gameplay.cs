@@ -175,10 +175,22 @@ namespace Zork
             }
         }
 
-        //TODO : récupérer de l'XP en fonction de la différence de niveau
+        // Si le monstre est plus haut lvl on gagne beaucoup d'XP
+        // Si notre lvl est le double de celui du monstre on ne gagne pas xp
         private void getXp(Monster monster)
         {
+            Random random = new Random();
+            double randomFactor = 1 + random.NextDouble();
+            int lvlDiff = monster.Level - (game.player.Xp / 1000);
+            int xpToGet = lvlDiff + monster.Level;
 
+            if (xpToGet < 0)
+            {
+                xpToGet = 0;
+            }
+
+            game.player.Xp += Convert.ToInt32(xpToGet * randomFactor);
+            updateGame();
         }
 
         //TODO : Récupérer éventuellement un loot en fonction de la différence de niveau
@@ -200,6 +212,7 @@ namespace Zork
             }
         }
 
+        // Verifie si la game doit être terminée et met un message en conséquence
         private Boolean shouldEndGame()
         {
             if (game.player.Hp <= 0)
