@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using DataAccessLayer;
@@ -251,6 +251,21 @@ namespace Zork
                 return true;
             }
             return false;
+        }
+
+        private void getWeapon()
+        {
+
+            //TODO : mettre la constante dans un fichier de conf
+            double lootRate = 0.3;
+            if (random.NextDouble() < lootRate)
+            {
+                int index = random.Next(game.Weapons.Count);
+                game.player.Weapons.Add(game.Weapons[index]);
+                Console.WriteLine("Vous avez trouvé " + game.Weapons[index].name);
+
+                updateGame();
+            }
         }
 
         // Plus le monstre et le joueur ont un niveau proche, moins la chance de s'échapper est grande.
