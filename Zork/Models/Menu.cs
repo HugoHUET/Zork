@@ -7,6 +7,8 @@ namespace Zork.Models
     {
         private static List<Option> options;
 
+        public static string lastMoveDescription;
+
         public static void DisplayMenu(List<Option> optionsList)
         {
             options = optionsList;
@@ -44,6 +46,7 @@ namespace Zork.Models
                 if (keyinfo.Key == ConsoleKey.Enter)
                 {
                     Console.Clear();
+                    lastMoveDescription = null;
                     options[index].Selected.Invoke();
                     break;
                 }
@@ -55,6 +58,11 @@ namespace Zork.Models
         static void WriteMenu(List<Option> options, Option selectedOption)
         {
             Console.Clear();
+
+            if (!string.IsNullOrWhiteSpace(lastMoveDescription))
+            {
+                Console.WriteLine(lastMoveDescription);
+            }
 
             foreach (Option option in options)
             {
