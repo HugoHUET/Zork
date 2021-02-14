@@ -35,7 +35,7 @@ namespace Zork
             game = new Game(gameName);
 
             // TODO : Sélecteur pour le pseudo et fichier de conf pour les hp de base
-            Player player = new Player("torti", 20, 0);
+            Player player = new Player(null, 20, 0);
             Weapon rustedToothPick = new Weapon("rustedToothPick", 5, 0.1);
             Weapon nerfGun = new Weapon("nerfGun", 1, 0.5);
 
@@ -70,18 +70,42 @@ namespace Zork
 
         public void load()
         {
-            game = context.Games.First();
+            var options = new List<Option>();
+            context.Games.ToList().ForEach((game) =>
+            {
+                options.Add(new Option(game.name, () =>
+                {
+                    //TODO tout est null dans l'objet game (sauf le nom)
+                    this.game = game;
+                    run();
+                }));
+            });
+
+            if (options.Count == 0)
+            {
+                Menu.lastMoveDescription = "Vous n'avez pas de partie de sauvegardée";
+            }
+
+            options.Add(new Option("Retour", () => { }));
+
+            Menu.DisplayMenu(options);
         }
 
         private void run()
         {
-            while (shouldEndGame() != true)
+            bool wantToexit = false;
+            while (wantToexit == false && shouldEndGame() != true)
             {
                 var options = new List<Option>
                 {
                     new Option("Afficher l’inventaire", () => listAndUseItems()),
                     new Option("Afficher les stats", () => displayStats()),
-                    new Option("Se déplacer", () => selectDirection())
+                    new Option("Se déplacer", () => selectDirection()),
+                    new Option("Sauvegarder et quitter", () => {
+                        updateGame();
+                        Menu.lastMoveDescription = "Partie sauvegardée avec succès";
+                        wantToexit= true;
+                    })
                 };
 
                 Menu.DisplayMenu(options);
@@ -93,7 +117,7 @@ namespace Zork
         {
             var options = new List<Option>{ new Option("Retour", () => { }) };
 
-            Menu.lastMoveDescription = $"Name : {game.player.Name}\nHP : {game.player.Hp}\nExperience : {game.player.Xp}\n";
+            Menu.lastMoveDescription = $"HP : {game.player.Hp}\nExperience : {game.player.Xp}\n";
 
             Menu.DisplayMenu(options);
         }
