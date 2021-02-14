@@ -52,9 +52,9 @@ namespace Zork
             game.Weapons.Add(rustedToothPick);
             game.Weapons.Add(nerfGun);
 
-            game.UsedObjects.Add(painDeMie);
-            game.UsedObjects.Add(huileDeFoieDeMorue);
-            game.UsedObjects.Add(bananaSkin);
+            game.Loots.Add(painDeMie);
+            game.Loots.Add(huileDeFoieDeMorue);
+            game.Loots.Add(bananaSkin);
 
             game = context.Games.Add(game).Entity;
             this.context.SaveChanges();
@@ -87,9 +87,9 @@ namespace Zork
 
         private void displayInventory()
         {
-            if(game.Inventory.Count > 0)
+            if(game.player.Inventory.Count > 0)
             {
-                game.Inventory.ForEach((objet) =>
+                game.player.Inventory.ForEach((objet) =>
                 {
                     Console.WriteLine($"{objet.Name} : \n Attack : {objet.AttackStrengthBoost}\n Defense : {objet.DefenseBoost}\n HP : {objet.HPRestoreValue}");
                 });
@@ -136,11 +136,11 @@ namespace Zork
 
         private void useItem(DataAccessLayer.Models.Object item)
         {
-            if (game.Inventory.Contains(item))
+            if (game.player.Inventory.Contains(item))
             {
                 game.player.Hp += item.HPRestoreValue;
-                game.Inventory.Remove(item);
-                game.UsedObjects.Add(item);
+                game.player.Inventory.Remove(item);
+                game.player.UsedObjects.Add(item);
 
                 this.updateGame();
             }
@@ -151,16 +151,22 @@ namespace Zork
             
         }
 
+        // Système d'attaque d'un monstre avec une arme
         private void attack(Monster monster, Weapon weapon)
         {
             Random random = new Random();
             if(random.NextDouble() > weapon.MissRate)
             {
-                monster.Hp -= Convert.ToInt32(weapon.Damages * (1.0 + game.getTotalAttackBoost()));
+                monster.Hp -= Convert.ToInt32(weapon.Damages * (1.0 + game.player.getTotalAttackBoost()));
                 if (monster.Hp <= 0)
                 {
                     game.Monsters.Remove(monster);
                     this.updateGame();
+
+                    //On récupère l'XP et les loots à la fin du combat
+                    getXp(monster);
+                    getLoot(monster);
+
                     Console.WriteLine(monster.Name + " est mort");
                 }
                 else
@@ -190,12 +196,26 @@ namespace Zork
             }
 
             game.player.Xp += Convert.ToInt32(xpToGet * randomFactor);
+            Console.WriteLine("Vous avez gagné " + Convert.ToInt32(xpToGet * randomFactor) + " XP !");
+
             updateGame();
         }
 
-        //TODO : Récupérer éventuellement un loot en fonction de la différence de niveau
+        //Récupère un loot aléatoire. Le %drop est augmenté si le monstre a un lvl important par rapport au joueur
+        // Si le monstre a un lvl trop faible par rapport au joueur, le drop est de 0%
         private void getLoot(Monster monster)
         {
+            Random random = new Random();
+
+            double lootRate = 0.3 + (monster.Level - game.player.Xp / 1000) / 100;
+            if (random.NextDouble() < lootRate)
+            {
+                int index = random.Next(game.Loots.Count);
+                game.player.Inventory.Add(game.Loots[index]);
+                Console.WriteLine("Vous avez drop " + game.Loots[index].Name);
+
+                updateGame();
+            }
 
         }
         private void getAttacked(Monster monster)
@@ -203,7 +223,7 @@ namespace Zork
             Random random = new Random();
             if (random.NextDouble() > monster.MissRate)
             {
-                game.player.Hp -= Convert.ToInt32(monster.Damages * (1.0 - game.getTotalDefenseBoost()));
+                game.player.Hp -= Convert.ToInt32(monster.Damages * (1.0 - game.player.getTotalDefenseBoost()));
                 updateGame();
             }
             else
