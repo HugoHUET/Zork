@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using DataAccessLayer;
@@ -11,11 +11,13 @@ namespace Zork
     {
         private Game game;
         private readonly ZorkDbContext context;
+        Random random;
 
         public Gameplay()
         {
             DbContextFactory dbFactory = new DbContextFactory();
             this.context = dbFactory.CreateDbContext(null);
+            random = new Random();
         }
 
         public void create()
@@ -154,7 +156,6 @@ namespace Zork
         // Système d'attaque d'un monstre avec une arme
         private void attack(Monster monster, Weapon weapon)
         {
-            Random random = new Random();
             if(random.NextDouble() > weapon.MissRate)
             {
                 monster.Hp -= Convert.ToInt32(weapon.Damages * (1.0 + game.player.getTotalAttackBoost()));
@@ -185,7 +186,6 @@ namespace Zork
         // Si notre lvl est le double de celui du monstre on ne gagne pas xp
         private void getXp(Monster monster)
         {
-            Random random = new Random();
             double randomFactor = 1 + random.NextDouble();
             int lvlDiff = monster.Level - (game.player.Xp / 1000);
             int xpToGet = lvlDiff + monster.Level;
@@ -205,8 +205,6 @@ namespace Zork
         // Si le monstre a un lvl trop faible par rapport au joueur, le drop est de 0%
         private void getLoot(Monster monster)
         {
-            Random random = new Random();
-
             double lootRate = 0.3 + (monster.Level - game.player.Xp / 1000) / 100;
             if (random.NextDouble() < lootRate)
             {
@@ -220,7 +218,6 @@ namespace Zork
         }
         private void getAttacked(Monster monster)
         {
-            Random random = new Random();
             if (random.NextDouble() > monster.MissRate)
             {
                 game.player.Hp -= Convert.ToInt32(monster.Damages * (1.0 - game.player.getTotalDefenseBoost()));
@@ -274,7 +271,6 @@ namespace Zork
         private Boolean canRunAway(Monster monster)
         {
             double runAwayRate = 0.5 + Math.Abs((game.player.Xp / 1000 - monster.Level) / 100);
-            Random random = new Random();
             return random.NextDouble() < runAwayRate;
         }
 
