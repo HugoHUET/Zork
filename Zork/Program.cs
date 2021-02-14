@@ -19,19 +19,20 @@ namespace Zork
                     gameplay.load();
                 }),
                 new Option("About", () => {
-                    WriteTemporaryMessage("Paul Lereverend et Hugo Huet");
+                    Console.Clear();
+                    Console.WriteLine("Paul Lereverend et Hugo Huet");
+                    Console.WriteLine("\nAppuyer sur n'importe quelle touche pour retourner au menu précédent");
+                    Console.ReadKey();
                 }),
                 new Option("Exit", () => Environment.Exit(0)),
             };
 
-            Menu.DisplayMenu(options);
-        }
+            while (true)
+            {
+                Menu.DisplayMenu(options);
+            }
+            
 
-        // Default action of all the options. You can create more methods
-        static void WriteTemporaryMessage(string message)
-        {
-            Console.Clear();
-            Console.WriteLine(message);
         }
     }
 }
