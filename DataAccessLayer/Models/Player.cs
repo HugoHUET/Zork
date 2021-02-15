@@ -22,11 +22,6 @@ namespace DataAccessLayer.Models
             Inventory = new List<Object>();
             Weapons = new List<Weapon>();
         }
-
-        public Player()
-        {
-        }
-
         public double getTotalDefenseBoost()
         {
             double totalDefenseBoost = 0;

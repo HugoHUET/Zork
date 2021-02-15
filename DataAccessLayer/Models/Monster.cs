@@ -18,9 +18,5 @@ namespace DataAccessLayer.Models
             Hp = hp;
             Level = level;
         }
-
-        public Monster()
-        {
-        }
     }
 }

@@ -14,9 +14,5 @@ namespace DataAccessLayer.Models
             Damages = damages;
             MissRate = missRate;
         }
-
-        public Weapon()
-        {
-        }
     }
 }

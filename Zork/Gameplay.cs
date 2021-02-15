@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using DataAccessLayer;
@@ -140,8 +140,8 @@ namespace Zork
             Random random = new Random();
             if (random.NextDouble() >= 0.2) //80% de chance de tomber sur un monstre
             {
-                int index = random.Next(context.Monsters.Count());
-                Monster monster = context.Monsters.ToList()[index];
+                int index = random.Next(game.Monsters.Count());
+                Monster monster = game.Monsters.ToList()[index];
                 Menu.lastMoveDescription = $"Attention, un(e) {monster.Name} sauvage apparait !\n";
 
                 var options = new List<Option>

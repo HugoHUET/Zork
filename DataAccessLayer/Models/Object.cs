@@ -16,9 +16,5 @@ namespace DataAccessLayer.Models
             AttackStrengthBoost = attackStrengthBoost;
             DefenseBoost = defenseBoost;
         }
-
-        public Object()
-        {
-        }
     }
 }
