@@ -71,11 +71,10 @@ namespace Zork
         public void load()
         {
             var options = new List<Option>();
-            context.Games.ToList().ForEach((game) =>
+            context.Games.Include(g => g.player).Include(g => g.Loots).Include(g => g.Monsters).Include(g => g.Weapons).ToList().ForEach((game) =>
             {
                 options.Add(new Option(game.name, () =>
                 {
-                    //TODO tout est null dans l'objet game (sauf le nom)
                     this.game = game;
                     run();
                 }));
@@ -348,26 +347,25 @@ namespace Zork
         // Verifie si la game doit être terminée et met un message en conséquence
         private bool shouldEndGame()
         {
-            if (game.player.Hp <= 0)
+            if (game.player.Hp > 0)
             {
-                Menu.lastMoveDescription = "Vous avez perdu !\n";
+                if (game.Monsters.Count == 0)
+                {
+                    Menu.lastMoveDescription = "Vous avez battu tous les monstres félicitations !\n";
+                    context.Games.Remove(game);
+                    context.SaveChanges();
+                    return true;
+                }
 
-                context.Games.Remove(game);
-                context.SaveChanges();
-                return true;
+                Menu.lastMoveDescription += $"Vous avez { game.player.Hp } HP\nIl reste { game.Monsters.Count } monstres à vaincre sur la carte\n";
+
+                return false;
             }
+            Menu.lastMoveDescription = "Vous avez perdu !\n";
 
-            if(game.Monsters.Count() == 0)
-            {
-                Menu.lastMoveDescription = "Vous avez battu tous les monstres félicitations !\n";
-                context.Games.Remove(game);
-                context.SaveChanges();
-                return true;
-            }
-
-            Menu.lastMoveDescription += $"Vous avez { game.player.Hp } HP\nIl reste { game.Monsters.Count } monstres à vaincre sur la carte\n";
-
-            return false;
+            context.Games.Remove(game);
+            context.SaveChanges();
+            return true;
         }
 
         private void getWeapon()
