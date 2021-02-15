@@ -138,9 +138,8 @@ namespace Zork
         private void move()
         {
 
-            getWeapon();
             //TODO : mettre dans un fichier de conf
-            double monsterRate = 0.8;
+            double monsterRate = 0.6;
             if (random.NextDouble() < monsterRate) //80% de chance de tomber sur un monstre
             {
                 int index = random.Next(game.Monsters.Count());
@@ -325,15 +324,21 @@ namespace Zork
             double lootRate = 0.3 + (monster.Level - game.player.Xp / 1000) / 100;
             if (random.NextDouble() < lootRate)
             {
-                int index = random.Next(game.Loots.Count);
-                game.player.Inventory.Add(game.Loots[index]);
-                Menu.lastMoveDescription += $"Vous avez drop { game.Loots[index].Name }\n";
-
-                updateGame();
+                int index = random.Next(game.Weapons.Count);
+                Menu.lastMoveDescription = $"Vous avez trouvé { game.Weapons[index].name }\n";
+                if (game.player.Weapons.Contains(game.Weapons[index]))
+                {
+                    Menu.lastMoveDescription += "Pas de chance vous possédez déjà cette arme\n";
+                }
+                else
+                {
+                    game.player.Weapons.Add(game.Weapons[index]);
+                    updateGame();
+                }
             }
             else
             {
-                Menu.lastMoveDescription += $"Pas de chance, {monster.Name} n'a pas d'objet sur lui\n";
+                Menu.lastMoveDescription += $"Pas de chance, {monster.Name} n'a pas d'arme sur lui\n";
             }
 
         }
@@ -378,27 +383,6 @@ namespace Zork
             context.Games.Remove(game);
             context.SaveChanges();
             return true;
-        }
-
-        private void getWeapon()
-        {
-
-            //TODO : mettre la constante dans un fichier de conf
-            double lootRate = 0.3;
-            if (random.NextDouble() < lootRate)
-            {
-                int index = random.Next(game.Weapons.Count);
-                Menu.lastMoveDescription = $"Vous avez trouvé { game.Weapons[index].name }\n";
-                if (game.player.Weapons.Contains(game.Weapons[index]))
-                {
-                    Menu.lastMoveDescription += "Pas de chance vous possédez déjà cette arme\n";
-                }
-                else
-                {
-                    game.player.Weapons.Add(game.Weapons[index]);
-                    updateGame();
-                }
-            }
         }
 
         // Plus le monstre et le joueur ont un niveau proche, moins la chance de s'échapper est grande.
