@@ -137,8 +137,11 @@ namespace Zork
 
         private void move()
         {
-            Random random = new Random();
-            if (random.NextDouble() >= 0.2) //80% de chance de tomber sur un monstre
+
+            getWeapon();
+            //TODO : mettre dans un fichier de conf
+            double monsterRate = 0.8;
+            if (random.NextDouble() < monsterRate) //80% de chance de tomber sur un monstre
             {
                 int index = random.Next(game.Monsters.Count());
                 Monster monster = game.Monsters.ToList()[index];
