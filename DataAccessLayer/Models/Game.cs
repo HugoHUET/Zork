@@ -12,10 +12,6 @@ namespace DataAccessLayer.Models
         public List<Object> Loots { get; set; }
         public List<Weapon> Weapons { get; set; }
 
-        public Game()
-        {
-        }
-
         public Game(string name)
         {
             this.name = name;
