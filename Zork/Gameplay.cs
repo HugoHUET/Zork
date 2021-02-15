@@ -147,22 +147,7 @@ namespace Zork
                 Monster monster = game.Monsters.ToList()[index];
                 Menu.lastMoveDescription = $"Attention, un(e) {monster.Name} sauvage apparait !\n";
 
-                var options = new List<Option>
-                {
-                    new Option("Prendre la fuite", () => {
-                        if (canRunAway(monster))
-                        {
-                            Menu.lastMoveDescription = "Vous avez pris la fuite...\n";
-                        }
-                        else
-                        {
-                            Menu.lastMoveDescription = "Impossible de s'enfuir, le monstre est trop rapide !\n";
-                            fight(monster);
-                        }
-                    }),
-                    new Option("Combattre", () => fight(monster))
-                };
-                Menu.DisplayMenu(options);
+                fight(monster);
             }
             else
             {
@@ -177,6 +162,8 @@ namespace Zork
 
         private void fight(Monster monster)
         {
+            bool runAway = false;
+            bool canChooseRunAway = true;
             do
             {
                 string tmp = Menu.lastMoveDescription;
@@ -189,12 +176,32 @@ namespace Zork
                             Menu.lastMoveDescription = tmp;
                         }
                     }),
-                    new Option($"Attaquer {monster.Name}", () => listAnsUseWeapons(monster))
+                    new Option($"Attaquer {monster.Name}", () => {
+                        listAnsUseWeapons(monster);
+                        canChooseRunAway = true;
+                    })
                 };
+
+                if(canChooseRunAway)
+                {
+                    options.Add(new Option("Prendre la fuite", () =>
+                        {
+                            if (canRunAway(monster))
+                            {
+                                Menu.lastMoveDescription = "Vous avez pris la fuite...\n";
+                                runAway = true;
+                            }
+                            else
+                            {
+                                Menu.lastMoveDescription = "Impossible de s'enfuir, le monstre vous a rattrapé !\n";
+                                canChooseRunAway = false;
+                            }
+                        }));
+                }
 
                 Menu.DisplayMenu(options);
 
-            } while (game.player.Hp > 0 && monster.Hp > 0);
+            } while (game.player.Hp > 0 && monster.Hp > 0 && runAway == false);
         }
 
         private bool listAndUseItems()
@@ -356,7 +363,7 @@ namespace Zork
             {
                 if (game.Monsters.Count == 0)
                 {
-                    Menu.lastMoveDescription = "Vous avez battu tous les monstres félicitations !\n";
+                    Menu.lastMoveDescription = "Victoire ! Vous avez battu tous les monstres félicitations !\n";
                     context.Games.Remove(game);
                     context.SaveChanges();
                     return true;
@@ -366,7 +373,7 @@ namespace Zork
 
                 return false;
             }
-            Menu.lastMoveDescription = "Vous avez perdu !\n";
+            Menu.lastMoveDescription = "Défaite... Vous aurez plus de chance la prochaine fois !\n";
 
             context.Games.Remove(game);
             context.SaveChanges();
