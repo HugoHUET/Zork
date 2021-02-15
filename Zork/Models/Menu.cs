@@ -9,7 +9,7 @@ namespace Zork.Models
 
         public static string lastMoveDescription;
 
-        public static void DisplayMenu(List<Option> optionsList)
+        public static void DisplayMenu(List<Option> optionsList, Option specialAttack = null)
         {
             options = optionsList;
 
@@ -21,6 +21,8 @@ namespace Zork.Models
 
             // Store key info in here
             ConsoleKeyInfo keyinfo;
+
+            int countArrowDown = 0;
             do
             {
                 keyinfo = Console.ReadKey();
@@ -28,6 +30,15 @@ namespace Zork.Models
                 // Handle each key input (down arrow will write the menu again with a different selected item)
                 if (keyinfo.Key == ConsoleKey.DownArrow)
                 {
+                    if (specialAttack != null)
+                    {
+                        countArrowDown++;
+
+                        if(countArrowDown == 5)
+                        {
+                            optionsList.Add(specialAttack);
+                        }
+                    }
                     if (index + 1 < options.Count)
                     {
                         index++;

@@ -34,18 +34,17 @@ namespace Zork
 
             game = new Game(gameName);
 
-            // TODO : Sélecteur pour le pseudo et fichier de conf pour les hp de base
-            Player player = new Player(null, 20, 0);
+            Player player = new Player(null, Constants.PlayerHP, 0);
             Weapon rustedToothPick = new Weapon("rustedToothPick", 5, 0.1);
             Weapon nerfGun = new Weapon("nerfGun", 1, 0.5);
 
             player.Weapons.Add(rustedToothPick);
 
-            DataAccessLayer.Models.Object painDeMie = new DataAccessLayer.Models.Object("painDeMie", 2, 1, 1);
+            Object painDeMie = new Object("painDeMie", 2, 1, 1);
 
             // Easter egg : L'huile de foie de morue est deg donc elle enlève des HP mais elle renforce a mort
-            DataAccessLayer.Models.Object huileDeFoieDeMorue = new DataAccessLayer.Models.Object("huileDeFoieDeMorue", -3, 3, 5);
-            DataAccessLayer.Models.Object bananaSkin = new DataAccessLayer.Models.Object("bananaSkin", 2, 1, 1);
+            Object huileDeFoieDeMorue = new Object("huileDeFoieDeMorue", -3, 3, 5);
+            Object bananaSkin = new Object("bananaSkin", 2, 1, 1);
 
             Monster kwoakGaming = new Monster("kwoakGaming",3 , 0.2, 20, 12);
             Monster cSharpDev = new Monster("cSharpDev", 5, 0.1, 40, 40);
@@ -68,6 +67,7 @@ namespace Zork
             this.run();
         }
 
+        //Chargement d'une partie
         public void load()
         {
             var options = new List<Option>();
@@ -90,6 +90,7 @@ namespace Zork
             Menu.DisplayMenu(options);
         }
 
+        //Boucle de la partie
         private void run()
         {
             bool wantToexit = false;
@@ -112,6 +113,7 @@ namespace Zork
             } ;
         }
 
+        //Affichage des statistiques du joueurs
         private void displayStats()
         {
             var options = new List<Option>{ new Option("Retour", () => { }) };
@@ -121,6 +123,7 @@ namespace Zork
             Menu.DisplayMenu(options);
         }
 
+        //Sélecteur de direction
         private void selectDirection()
         {
             var options = new List<Option>
@@ -135,12 +138,10 @@ namespace Zork
             Menu.DisplayMenu(options);
         }
 
+        //Arrivé sur une nouvelle case
         private void move()
         {
-
-            //TODO : mettre dans un fichier de conf
-            double monsterRate = 0.6;
-            if (random.NextDouble() < monsterRate) //80% de chance de tomber sur un monstre
+            if (random.NextDouble() < Constants.MonsterRate) // x% de chance de tomber sur un monstre
             {
                 int index = random.Next(game.Monsters.Count());
                 Monster monster = game.Monsters.ToList()[index];
@@ -159,6 +160,7 @@ namespace Zork
             }
         }
 
+        //Boucle de combat
         private void fight(Monster monster)
         {
             bool runAway = false;
@@ -203,6 +205,7 @@ namespace Zork
             } while (game.player.Hp > 0 && monster.Hp > 0 && runAway == false);
         }
 
+        //Sélecteur d'items
         private bool listAndUseItems()
         {
             bool isReturn = false;
@@ -226,6 +229,7 @@ namespace Zork
             return isReturn;
         }
 
+        //Sélecteur d'armes
         private void listAnsUseWeapons(Monster monster)
         {
             var options = new List<Option>();
@@ -236,11 +240,13 @@ namespace Zork
 
             if (options.Count > 0)
             {
-                Menu.DisplayMenu(options);
+                Weapon specialWeapon = new Weapon("KAMEAMEMA", 1000, 0);
+                Menu.DisplayMenu(options, new Option(specialWeapon.name, () => attack(monster, specialWeapon)));
             }
         }
 
-        private void useItem(DataAccessLayer.Models.Object item)
+        //Système de consomation d'un item
+        private void useItem(Object item)
         {
             if (game.player.Inventory.Contains(item))
             {
@@ -342,6 +348,8 @@ namespace Zork
             }
 
         }
+
+        //Le monstre attaque le joueur
         private void getAttacked(Monster monster)
         {
             if(monster.Hp > 0)
