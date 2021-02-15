@@ -143,21 +143,23 @@ namespace Zork
                 int index = random.Next(context.Monsters.Count());
                 Monster monster = context.Monsters.ToList()[index];
                 Menu.lastMoveDescription = $"Attention, un(e) {monster.Name} sauvage apparait !\n";
-                if (canRunAway(monster))
+
+                var options = new List<Option>
                 {
-                    var options = new List<Option>
-                    {
-                        new Option("Prendre la fuite", () => {
+                    new Option("Prendre la fuite", () => {
+                        if (canRunAway(monster))
+                        {
                             Menu.lastMoveDescription = "Vous avez pris la fuite...\n";
-                        }),
-                        new Option("Combattre", () => fight(monster))
-                    };
-                    Menu.DisplayMenu(options);
-                }
-                else
-                {
-                    fight(monster);
-                }
+                        }
+                        else
+                        {
+                            Menu.lastMoveDescription = "Impossible de s'enfuir, le monstre est trop rapide !\n";
+                            fight(monster);
+                        }
+                    }),
+                    new Option("Combattre", () => fight(monster))
+                };
+                Menu.DisplayMenu(options);
             }
             else
             {
