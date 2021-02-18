@@ -6,6 +6,8 @@ using DataAccessLayer.Models;
 using Microsoft.EntityFrameworkCore;
 using Zork.Models;
 using Object = DataAccessLayer.Models.Object;
+using System.Configuration;
+using System.Collections.Specialized;
 
 namespace Zork
 {
@@ -13,6 +15,9 @@ namespace Zork
     {
         private Game game;
         private readonly ZorkDbContext context;
+        private double MonsterRate;
+        private int PlayerHP;
+
         Random random;
 
         public Gameplay()
@@ -20,6 +25,9 @@ namespace Zork
             DbContextFactory dbFactory = new DbContextFactory();
             this.context = dbFactory.CreateDbContext(null);
             random = new Random();
+
+            MonsterRate = Convert.ToDouble(ConfigurationManager.AppSettings.Get("MonsterRate"));
+            PlayerHP = Convert.ToInt32(ConfigurationManager.AppSettings.Get("PlayerHP"));
         }
 
         public void create()
@@ -34,7 +42,7 @@ namespace Zork
 
             game = new Game(gameName);
 
-            Player player = new Player(null, Constants.PlayerHP, 0);
+            Player player = new Player(null, PlayerHP, 0);
             Weapon rustedToothPick = new Weapon("rustedToothPick", 5, 0.1);
             Weapon nerfGun = new Weapon("nerfGun", 1, 0.5);
 
@@ -141,7 +149,7 @@ namespace Zork
         //Arrivé sur une nouvelle case
         private void move()
         {
-            if (random.NextDouble() < Constants.MonsterRate) // x% de chance de tomber sur un monstre
+            if (random.NextDouble() < MonsterRate) // x% de chance de tomber sur un monstre
             {
                 int index = random.Next(game.Monsters.Count());
                 Monster monster = game.Monsters.ToList()[index];
