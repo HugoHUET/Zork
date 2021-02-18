@@ -54,11 +54,7 @@ namespace Zork
             Object huileDeFoieDeMorue = new Object("huileDeFoieDeMorue", -3, 3, 5);
             Object bananaSkin = new Object("bananaSkin", 2, 1, 1);
 
-            Monster kwoakGaming = new Monster("kwoakGaming",3 , 0.2, 20, 12);
-            Monster cSharpDev = new Monster("cSharpDev", 5, 0.1, 40, 40);
-
-            game.Monsters.Add(kwoakGaming);
-            game.Monsters.Add(cSharpDev);
+            initMonsters();
 
             game.player = player;
 
@@ -415,6 +411,35 @@ namespace Zork
         {
             context.Games.Update(game);
             context.SaveChanges();
+        }
+
+        // Retourne la description du lieu
+        private String getLocationDescription()
+        {
+            string[] InFormOfStringArray = ConfigurationManager.AppSettings["LocationsDescription"].Split(',').Select(s => s.Trim()).ToArray();
+            List<string> list = new List<string>(InFormOfStringArray);
+            return list[random.Next(list.Count)];
+        }
+
+        //Initialise les monstres aléatoirement
+        private void initMonsters()
+        {
+            Monster kwoakGaming = new Monster("kwoakGaming", 3, 0.2, 20, 12);
+            Monster cSharpDev = new Monster("cSharpDev", 5, 0.1, 40, 40);
+
+            int MonstersNb = Convert.ToInt32(ConfigurationManager.AppSettings["MonstersNb"]);
+            for (int i = 0; i < MonstersNb; i++)
+            {
+                if (random.NextDouble() > 0.5)
+                {
+                    game.Monsters.Add(kwoakGaming);
+                }
+                else
+                {
+                    game.Monsters.Add(cSharpDev);
+                }
+            }
+            
         }
 
     }
