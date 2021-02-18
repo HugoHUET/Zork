@@ -7,7 +7,6 @@ using Microsoft.EntityFrameworkCore;
 using Zork.Models;
 using Object = DataAccessLayer.Models.Object;
 using System.Configuration;
-using System.Collections.Specialized;
 
 namespace Zork
 {
@@ -22,8 +21,15 @@ namespace Zork
 
         public Gameplay()
         {
+            string DbServer = ConfigurationManager.AppSettings.Get("DbServer");
+            string DbUsername = ConfigurationManager.AppSettings.Get("DbUsername");
+            string DbPassword = ConfigurationManager.AppSettings.Get("DbPassword");
+            string DbName = ConfigurationManager.AppSettings.Get("DbName");
+
+            string[] args = { DbServer, DbName, DbUsername, DbPassword };
+
             DbContextFactory dbFactory = new DbContextFactory();
-            this.context = dbFactory.CreateDbContext(null);
+            this.context = dbFactory.CreateDbContext(args);
             random = new Random();
 
             MonsterRate = Convert.ToDouble(ConfigurationManager.AppSettings.Get("MonsterRate"));
@@ -427,8 +433,10 @@ namespace Zork
             Monster kwoakGaming = new Monster("kwoakGaming", 3, 0.2, 20, 12);
             Monster cSharpDev = new Monster("cSharpDev", 5, 0.1, 40, 40);
 
-            int MonstersNb = Convert.ToInt32(ConfigurationManager.AppSettings["MonstersNb"]);
-            for (int i = 0; i < MonstersNb; i++)
+            int MonsterNb = Convert.ToInt32(ConfigurationManager.AppSettings["MonsterNb"]);
+            Console.WriteLine(MonsterNb);
+
+            for (int i = 0; i < MonsterNb; i++)
             {
                 if (random.NextDouble() > 0.5)
                 {
