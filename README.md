@@ -5,8 +5,8 @@ By Hugo HUET & Paul LEREVEREND
 
 Afin de lancer le projet :
 1. Il faut au préalable avoir créé une base de données. 
-2. Il faut avoir saisis les identifiants de la base dans le fichier App.config
-3. Il faut appliquer les migrations via la commande `dotnet ef database update`
+2. Il faut avoir saisis les identifiants de la base dans le fichier `DataAccessLayer/appsettings.json`
+3. Il faut appliquer les migrations via la commande `dotnet ef database update` en étant au préalable placé dans le dossier DataAccessLayer
 
 Enfin il ne vous reste plus qu'a lancer le projet via le bouton présent dans visual studio
 
