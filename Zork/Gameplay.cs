@@ -151,11 +151,12 @@ namespace Zork
         //Arrivé sur une nouvelle case
         private void move()
         {
+            Menu.lastMoveDescription = $"{getLocationDescription()}.\n";
             if (random.NextDouble() < MonsterRate) // x% de chance de tomber sur un monstre
             {
                 int index = random.Next(game.Monsters.Count());
                 Monster monster = game.Monsters.ToList()[index];
-                Menu.lastMoveDescription = $"Attention, un(e) {monster.Name} sauvage apparait !\n";
+                Menu.lastMoveDescription += $"Attention, un(e) {monster.Name} sauvage apparait !\n";
 
                 fight(monster);
             }
@@ -166,7 +167,7 @@ namespace Zork
                 game.player.Inventory.Add(objet);
                 updateGame();
 
-                Menu.lastMoveDescription = $"Vous avez trouvé {objet.Name}\n";
+                Menu.lastMoveDescription += $"Vous avez trouvé {objet.Name}\n";
             }
         }
 
@@ -434,7 +435,6 @@ namespace Zork
             Monster cSharpDev = new Monster("cSharpDev", 5, 0.1, 40, 40);
 
             int MonsterNb = Convert.ToInt32(ConfigurationManager.AppSettings["MonsterNb"]);
-            Console.WriteLine(MonsterNb);
 
             for (int i = 0; i < MonsterNb; i++)
             {
