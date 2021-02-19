@@ -9,6 +9,11 @@
     <Folder Include="Models\" />
     <Folder Include="Services\" />
   </ItemGroup>
+   <ItemGroup>
+      <Content Include="App.config">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DataAccessLayer\DataAccessLayer.csproj" />
   </ItemGroup>

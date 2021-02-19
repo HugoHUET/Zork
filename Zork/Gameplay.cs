@@ -21,15 +21,8 @@ namespace Zork
 
         public Gameplay()
         {
-            string DbServer = ConfigurationManager.AppSettings.Get("DbServer");
-            string DbUsername = ConfigurationManager.AppSettings.Get("DbUsername");
-            string DbPassword = ConfigurationManager.AppSettings.Get("DbPassword");
-            string DbName = ConfigurationManager.AppSettings.Get("DbName");
-
-            string[] args = { DbServer, DbName, DbUsername, DbPassword };
-
             DbContextFactory dbFactory = new DbContextFactory();
-            this.context = dbFactory.CreateDbContext(args);
+            this.context = dbFactory.CreateDbContext(null);
             random = new Random();
 
             MonsterRate = Convert.ToDouble(ConfigurationManager.AppSettings.Get("MonsterRate"));
