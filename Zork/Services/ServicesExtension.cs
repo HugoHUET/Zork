@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 
 namespace Zork.Services
 {
@@ -7,7 +6,6 @@ namespace Zork.Services
     {
         public static IServiceCollection AddDataService(this IServiceCollection services)
         {
-            //services.AddDataService
             return services;
         }
     }
