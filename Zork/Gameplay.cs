@@ -43,7 +43,7 @@ namespace Zork
 
             Player player = new Player(null, PlayerHP, 0);
             Weapon rustedToothPick = new Weapon("rustedToothPick", 5, 0.1);
-            Weapon nerfGun = new Weapon("nerfGun", 1, 0.5);
+            Weapon nerfGun = new Weapon("nerfGun", 10, 0.5);
 
             player.Weapons.Add(rustedToothPick);
 
@@ -244,7 +244,7 @@ namespace Zork
 
             if (options.Count > 0)
             {
-                Weapon specialWeapon = new Weapon("KAMEAMEMA", 1000, 0);
+                Weapon specialWeapon = new Weapon("KAMEHAMEHA", 1000, 0);
                 Menu.DisplayMenu(options, new Option(specialWeapon.name, () => attack(monster, specialWeapon)));
             }
         }
@@ -335,7 +335,7 @@ namespace Zork
             if (random.NextDouble() < lootRate)
             {
                 int index = random.Next(game.Weapons.Count);
-                Menu.lastMoveDescription = $"Vous avez trouvé { game.Weapons[index].name }\n";
+                Menu.lastMoveDescription += $"Vous avez trouvé { game.Weapons[index].name }\n";
                 if (game.player.Weapons.Contains(game.Weapons[index]))
                 {
                     Menu.lastMoveDescription += "Pas de chance vous possédez déjà cette arme\n";
@@ -380,7 +380,7 @@ namespace Zork
             {
                 if (game.Monsters.Count == 0)
                 {
-                    Menu.lastMoveDescription = "Victoire ! Vous avez battu tous les monstres félicitations !\n";
+                    Menu.lastMoveDescription += "Victoire ! Vous avez battu tous les monstres félicitations !\n";
                     context.Games.Remove(game);
                     context.SaveChanges();
                     return true;
@@ -414,7 +414,7 @@ namespace Zork
         }
 
         // Retourne la description du lieu
-        private String getLocationDescription()
+        private string getLocationDescription()
         {
             string[] InFormOfStringArray = ConfigurationManager.AppSettings["LocationsDescription"].Split(',').Select(s => s.Trim()).ToArray();
             List<string> list = new List<string>(InFormOfStringArray);
@@ -424,20 +424,17 @@ namespace Zork
         //Initialise les monstres aléatoirement
         private void initMonsters()
         {
-            Monster kwoakGaming = new Monster("kwoakGaming", 3, 0.2, 20, 12);
-            Monster cSharpDev = new Monster("cSharpDev", 5, 0.1, 40, 40);
-
             int MonsterNb = Convert.ToInt32(ConfigurationManager.AppSettings["MonsterNb"]);
 
             for (int i = 0; i < MonsterNb; i++)
             {
                 if (random.NextDouble() > 0.5)
                 {
-                    game.Monsters.Add(kwoakGaming);
+                    game.Monsters.Add(new Monster("kwoakGaming", 3, 0.2, 20, 12));
                 }
                 else
                 {
-                    game.Monsters.Add(cSharpDev);
+                    game.Monsters.Add(new Monster("cSharpDev", 5, 0.1, 40, 40));
                 }
             }
             
