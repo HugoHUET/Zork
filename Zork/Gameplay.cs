@@ -121,7 +121,9 @@ namespace Zork
         {
             var options = new List<Option>{ new Option("Retour", () => { }) };
             int niveau = game.player.Xp / 50;
-            Menu.lastMoveDescription = $"HP : {game.player.Hp}\nExpérience : {game.player.Xp}xp\nNiveau : {niveau}\n";
+            Menu.lastMoveDescription = $"HP : {game.player.Hp}\n" +
+                $"Expérience : {game.player.Xp}xp\n" +
+                $"Niveau : {niveau+1}\n";
 
             Menu.DisplayMenu(options);
         }
@@ -239,7 +241,7 @@ namespace Zork
             var options = new List<Option>();
             game.player.Weapons.ForEach((weapon) =>
             {
-                options.Add(new Option(weapon.name, () => attack(monster, weapon)));
+                options.Add(new Option($"{weapon.name} : {weapon.Damages} dammages {weapon.MissRate*100}% missrate", () => attack(monster, weapon)));
             });
 
             if (options.Count > 0)
