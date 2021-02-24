@@ -29,6 +29,7 @@ namespace DataAccessLayer.Models
             {
                 totalDefenseBoost += obj.DefenseBoost;
             });
+            totalDefenseBoost /= 20;
             return totalDefenseBoost > 0.5 ? 0.5 : totalDefenseBoost;
         }
         public double getTotalAttackBoost()
@@ -38,6 +39,7 @@ namespace DataAccessLayer.Models
             {
                 totalAttackBoost += obj.AttackStrengthBoost;
             });
+            totalAttackBoost /= 20;
             return totalAttackBoost > 0.5 ? 0.5 : totalAttackBoost;
         }
     }
