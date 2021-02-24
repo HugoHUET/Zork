@@ -120,8 +120,8 @@ namespace Zork
         private void displayStats()
         {
             var options = new List<Option>{ new Option("Retour", () => { }) };
-
-            Menu.lastMoveDescription = $"HP : {game.player.Hp}\nExperience : {game.player.Xp}\n";
+            int niveau = game.player.Xp / 50;
+            Menu.lastMoveDescription = $"HP : {game.player.Hp}\nExpérience : {game.player.Xp}xp\nNiveau : {niveau}\n";
 
             Menu.DisplayMenu(options);
         }
@@ -312,7 +312,7 @@ namespace Zork
         private void getXp(Monster monster)
         {
             double randomFactor = 1 + random.NextDouble();
-            int lvlDiff = monster.Level - (game.player.Xp / 1000);
+            int lvlDiff = monster.Level - (game.player.Xp / 50);
             int xpToGet = lvlDiff + monster.Level;
 
             if (xpToGet < 0)
@@ -331,7 +331,7 @@ namespace Zork
         // Si le monstre a un lvl trop faible par rapport au joueur, le drop est de 0%
         private void getLoot(Monster monster)
         {
-            double lootRate = 0.3 + (monster.Level - game.player.Xp / 1000) / 100;
+            double lootRate = 0.3 + (monster.Level - game.player.Xp / 50) / 100;
             if (random.NextDouble() < lootRate)
             {
                 int index = random.Next(game.Weapons.Count);
@@ -402,7 +402,7 @@ namespace Zork
         // A l'inverse si le joueur peut éclater le monstre facilement, il peut également esquiver le combat pour gagner du temps
         private bool canRunAway(Monster monster)
         {
-            double runAwayRate = 0.5 + Math.Abs((game.player.Xp / 1000 - monster.Level) / 100);
+            double runAwayRate = 0.5 + Math.Abs((game.player.Xp / 50 - monster.Level) / 100);
             return random.NextDouble() < runAwayRate;
         }
 
